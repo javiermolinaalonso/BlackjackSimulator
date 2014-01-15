@@ -8,7 +8,7 @@ import com.blackjack.simulator.SingleThreadBasicSimulator;
 
 public class Simulator {
 	
-	private static Integer SIMULATIONS = 2000;
+	private static Integer SIMULATIONS = 1000;
 	private static final String PLAYER_HAND = "9d9c";
 	private static final String DEALER_HAND = "7s";
 	public static void main(String[] args) throws Exception {
@@ -24,6 +24,7 @@ public class Simulator {
 		System.out.println("Time Single Thread: " + timeSingle);
 		System.out.println("Time Multithreading: " + timeMultithread);
 		
+		SimulatorStatistics.print();
 		System.exit(0);
 	}
 	

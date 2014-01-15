@@ -48,6 +48,8 @@ public class StateSimulator {
 	@Override
 	public String toString(){
 		NumberFormat percFormat = NumberFormat.getPercentInstance();
+		percFormat.setMaximumFractionDigits(3);
+		percFormat.setMinimumFractionDigits(3);
 		NumberFormat numbFormat = NumberFormat.getNumberInstance();
 		StringBuffer sb = new StringBuffer();
 		sb.append("Action: " + action.toString() + "\n");

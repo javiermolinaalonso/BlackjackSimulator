@@ -3,7 +3,6 @@ package com.blackjack.simulator;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.blackjack.StateSimulator;
@@ -14,7 +13,7 @@ import com.blackjack.entities.SimulatorResults;
 
 public class BasicSimulator {
 
-	private static final Integer DECKS = 1;
+	private static final Integer DECKS = 6;
 	
 	private static final Integer NTHREADS = 4;
 	

@@ -65,7 +65,7 @@ public class RunnableActionSimulator implements Callable<StateSimulator> {
 			
 			calculateResults(playerHand, dealerHand, amntWin, ss);
 		}else{
-			BasicSimulator simulator = new BasicSimulator(BlackjackAction.availableActionsNotFirstRound(), 1);
+			BasicSimulator simulator = new BasicSimulator(BlackjackAction.availableActionsNotFirstRound(), 5);
 			SimulatorResults r = simulator.simulate(bjmd, playerHand, dealerHand.getShownCard());
 			StateSimulator state = r.getMapRatio().get(r.getBestAction());
 			ss.addDraw(state.getDrawRatio());

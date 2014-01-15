@@ -6,7 +6,6 @@ import com.blackjack.StateSimulator;
 import com.blackjack.entities.BlackJackMultiDeck;
 import com.blackjack.entities.DealerHand;
 import com.blackjack.entities.Deck;
-import com.blackjack.entities.FaceToFaceGame;
 import com.blackjack.entities.PlayerHand;
 import com.blackjack.entities.SimulatorResults;
 import com.blackjack.evaluator.HandComparator;
@@ -34,23 +33,6 @@ public class SingleThreadBasicSimulator {
 			mapRatio.put(action, new StateSimulator(action));
 		}
 		this.simulations = simulations;
-	}
-	/**
-	 * This method will recreate a real blackjack game
-	 */
-	public void simulate(){
-		//What we have: A deck, a player and a dealer
-		//We want to check the probability of win given the player hand, dealer card and cards in the deck
-		
-		//1st step: deal cards
-		//2nd step: Simulate N games to retrieve the ideal action
-		//3rd step: Evaluate and return results
-		FaceToFaceGame g = deal();
-		simulate(g, simulations);
-	}
-	
-	public void simulate(final FaceToFaceGame g, final Integer simulations){
-		simulate(g.getBjmd(), g.getPlayerHands(), g.getDealerCard());
 	}
 	
 	public SimulatorResults simulate(String playerHand, String dealerCard){
@@ -140,24 +122,4 @@ public class SingleThreadBasicSimulator {
 		}
 	}
 
-	private FaceToFaceGame deal(){
-		BlackJackMultiDeck bjmd = new BlackJackMultiDeck(DECKS);
-
-		PlayerHand hand = new PlayerHand(bjmd.pick());
-		byte dealerCard = bjmd.pick();
-		hand.addCard(bjmd.pick());
-		return new FaceToFaceGame(bjmd, hand, dealerCard);
-	}
-//	private BlackjackAction getBestAction() {
-//		Double best = Double.NEGATIVE_INFINITY;
-//		BlackjackAction bestAction = null;
-//		for(BlackjackAction action : mapRatio.keySet()){
-//			if(mapRatio.get(action).getMoneyRatio() > best){
-//				bestAction = action;
-//				best = mapRatio.get(action).getMoneyRatio();
-//			}
-//		}
-//		return bestAction;
-//	}
-	
 }

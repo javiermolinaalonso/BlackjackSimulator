@@ -2,6 +2,7 @@ package com.blackjack.simulator;
 
 import java.util.HashMap;
 
+import com.blackjack.SimulatorStatistics;
 import com.blackjack.StateSimulator;
 import com.blackjack.entities.BlackJackMultiDeck;
 import com.blackjack.entities.DealerHand;
@@ -32,7 +33,9 @@ public class RunnableSimulator implements Runnable {
 
 
 	public void run() {
+		Long time = System.currentTimeMillis();
 		for(BlackjackAction action : availableActions){
+			Long actionTime = System.currentTimeMillis();
 			final BlackJackMultiDeck starterDeck = new BlackJackMultiDeck(bjmd);
 			final PlayerHand starterHand = new PlayerHand(playerHands);
 			DealerHand dealerHand = new DealerHand(dealerCard);
@@ -46,9 +49,13 @@ public class RunnableSimulator implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			actionTime = System.currentTimeMillis() - actionTime;
+			if(availableActions.length > 2){
+				SimulatorStatistics.addAction(action, actionTime);
+			}
 		}
-//		
-//		return mapRatio;
+		time = System.currentTimeMillis() - time;
+		SimulatorStatistics.addTotal(time);
 	}
 
 
