@@ -1,6 +1,6 @@
 package com.blackjack.entities;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import com.blackjack.StateSimulator;
 import com.blackjack.simulator.BlackjackAction;
@@ -9,10 +9,10 @@ public class SimulatorResults {
 
 	private String playerHand;
 	private String dealerCard;
-	private HashMap<BlackjackAction, StateSimulator> mapRatio;
+	private Map<BlackjackAction, StateSimulator> mapRatio;
 	
 	public SimulatorResults(String playerHand, String dealerCard,
-			HashMap<BlackjackAction, StateSimulator> mapRatio) {
+			Map<BlackjackAction, StateSimulator> mapRatio) {
 		super();
 		this.playerHand = playerHand;
 		this.dealerCard = dealerCard;
@@ -24,7 +24,7 @@ public class SimulatorResults {
 	public String getDealerCard() {
 		return dealerCard;
 	}
-	public HashMap<BlackjackAction, StateSimulator> getMapRatio() {
+	public Map<BlackjackAction, StateSimulator> getMapRatio() {
 		return mapRatio;
 	}
 	

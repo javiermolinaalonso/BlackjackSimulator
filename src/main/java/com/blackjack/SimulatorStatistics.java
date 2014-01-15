@@ -8,7 +8,7 @@ public class SimulatorStatistics {
 	public static long doubleTime = 0;
 	public static long standTime = 0;
 	public static long totalTime = 0;
-	
+	public static long shuffleTime = 0;
 	
 	public static void addHit(long t){
 		hitTime+=t;
@@ -47,7 +47,7 @@ public class SimulatorStatistics {
 	
 	public static void print(){
 		System.out.println("Hit: " + hitTime + "ms, Stand: " + standTime + "ms, Double: " + doubleTime+"ms.");
-		System.out.println("Total time: " + totalTime + "ms.");
+		System.out.println("Shuffle time: " + shuffleTime + "ms.");
 	}
 
 }

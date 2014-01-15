@@ -1,10 +1,12 @@
 package com.blackjack.entities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
+
+import com.blackjack.SimulatorStatistics;
 
 public class BlackJackMultiDeck {
 
@@ -24,7 +26,7 @@ public class BlackJackMultiDeck {
 			for (int j = 0; j < d.getDeck().length; j++)
 				availableCards.add(d.getDeck()[j]);
 		}
-		shuffle();
+		shuffleAll();
 		values = new HashMap<Byte, List<Integer>>();
 		for(byte i = 0; i<52; i++){
 			List<Integer> value = new ArrayList<Integer>();
@@ -87,25 +89,63 @@ public class BlackJackMultiDeck {
 		throw new IllegalArgumentException("The card is not in the deck");
 	}
 	
-	public void print(){
-		for(int i = 0; i < availableCards.size(); i++)
-			System.out.print(availableCards.get(i)+", ");
-	}
-	
-	public void shuffle() {
-		Random rgen = new Random();
-		int max = 52*decks-1;
+	public void shuffleAll(){
 		availableCards.addAll(usedCards);
 		usedCards.clear();
-		Long seed = Math.abs(Long.valueOf(Math.abs(System.nanoTime()) % 203894));
-		for(int i = 0; i < 10000; i++){
-			int origin = rgen.nextInt(seed.intValue()+1) % max;
-			int end = rgen.nextInt(seed.intValue()+1) % max;
-			byte card = availableCards.remove(origin);
-			byte card2 = availableCards.remove(end);
-			availableCards.add(end, card);
-			availableCards.add(origin, card2);
+		shuffle();
+	}
+	
+	/*
+	 * Shuffle the available cards
+	 */
+	public void shuffle() {
+		Long t = System.currentTimeMillis();
+//		Random rgen = new Random();
+//		int max = availableCards.size()-1;
+//		Long seed = Math.abs(Long.valueOf(Math.abs(System.nanoTime()) % 203894));
+//		for(int i = 0; i < 10000; i++){
+//			int origin = rgen.nextInt(seed.intValue()+1) % max;
+//			int end = rgen.nextInt(seed.intValue()+1) % max;
+//			byte card = availableCards.remove(origin);
+//			byte card2 = availableCards.remove(end);
+//			availableCards.add(end, card);
+//			availableCards.add(origin, card2);
+//		}
+		Collections.shuffle(availableCards);
+		t = System.currentTimeMillis() - t;
+		SimulatorStatistics.shuffleTime+=t;
+	}
+	
+	/**
+	 * Burn the first "amount" cards
+	 * @param amount
+	 */
+	public void burn(Integer amount){
+		try{
+			for(int i = 0; i < amount; i++){
+				pick();
+			}
+		}catch(Exception e){
+			System.out.println("Invalid amount");
 		}
+	}
+	
+	public void burn(String cards, Integer amount){
+		try{
+			for(int i = 0; i < cards.length(); i+=2){
+				for(int j = 0; j < amount; j++){
+					pickCard(Deck.getValue(cards.substring(i,i+2)));
+				}
+			}
+		}catch(Exception e){
+			System.out.println("Invalid amount");
+		}
+	}
+	
+	public void print(){
+		for(int i = 0; i < availableCards.size(); i++)
+			System.out.print(Deck.getValue(availableCards.get(i))+", ");
+		System.out.println();
 	}
 	
 	public int getRemainingCards(){

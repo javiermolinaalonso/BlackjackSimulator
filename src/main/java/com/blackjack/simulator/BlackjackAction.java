@@ -8,11 +8,11 @@ public enum BlackjackAction {
 	SURRENDER;
 	
 	public static BlackjackAction[] availableActionsNotFirstRound(){
-		return new BlackjackAction[]{HIT, STAND};
+		return new BlackjackAction[]{STAND};
 	}
 	
 	public static BlackjackAction[] availableActionsFirstRound(){
-		return new BlackjackAction[]{HIT, STAND, DOUBLE};
+		return new BlackjackAction[]{STAND, DOUBLE};
 	}
 		
 	public boolean isEnd(){

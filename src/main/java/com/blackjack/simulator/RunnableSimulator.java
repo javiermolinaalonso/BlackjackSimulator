@@ -1,8 +1,8 @@
 package com.blackjack.simulator;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import com.blackjack.SimulatorStatistics;
 import com.blackjack.StateSimulator;
 import com.blackjack.entities.BlackJackMultiDeck;
 import com.blackjack.entities.DealerHand;
@@ -14,18 +14,20 @@ public class RunnableSimulator implements Runnable {
 	private PlayerHand playerHands; 
 	private byte dealerCard;
 	private BlackjackAction[] availableActions;
-	private HashMap<BlackjackAction, StateSimulator> mapRatio;
+	private ConcurrentHashMap<BlackjackAction, StateSimulator> mapRatio;
 	private Integer simulations;
+	private Integer identifier;
 	
 	public RunnableSimulator(BlackJackMultiDeck bjmd, PlayerHand playerHands,
-			byte dealerCard, BlackjackAction[] availableActions, Integer simulations) {
+			byte dealerCard, BlackjackAction[] availableActions, Integer simulations, Integer identifier) {
 		super();
 		this.bjmd = bjmd;
 		this.playerHands = playerHands;
 		this.dealerCard = dealerCard;
 		this.availableActions = availableActions;
 		this.simulations = simulations;
-		mapRatio = new HashMap<BlackjackAction, StateSimulator>();
+		this.identifier = identifier;
+		mapRatio = new ConcurrentHashMap<BlackjackAction, StateSimulator>();
 		for(BlackjackAction action : availableActions){
 			mapRatio.put(action, new StateSimulator(action));
 		}
@@ -33,9 +35,7 @@ public class RunnableSimulator implements Runnable {
 
 
 	public void run() {
-		Long time = System.currentTimeMillis();
 		for(BlackjackAction action : availableActions){
-			Long actionTime = System.currentTimeMillis();
 			final BlackJackMultiDeck starterDeck = new BlackJackMultiDeck(bjmd);
 			final PlayerHand starterHand = new PlayerHand(playerHands);
 			DealerHand dealerHand = new DealerHand(dealerCard);
@@ -49,17 +49,11 @@ public class RunnableSimulator implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			actionTime = System.currentTimeMillis() - actionTime;
-			if(availableActions.length > 2){
-				SimulatorStatistics.addAction(action, actionTime);
-			}
 		}
-		time = System.currentTimeMillis() - time;
-		SimulatorStatistics.addTotal(time);
 	}
 
 
-	public HashMap<BlackjackAction, StateSimulator> getMapRatio() {
+	public Map<BlackjackAction, StateSimulator> getMapRatio() {
 		return mapRatio;
 	}
 

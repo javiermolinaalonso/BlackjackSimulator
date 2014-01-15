@@ -13,7 +13,7 @@ import com.blackjack.entities.SimulatorResults;
 
 public class BasicSimulator {
 
-	private static final Integer DECKS = 6;
+	private static final Integer DECKS = 1;
 	
 	private static final Integer NTHREADS = 4;
 	
@@ -36,15 +36,24 @@ public class BasicSimulator {
 	}
 
 	public SimulatorResults simulate(String playerHand, String dealerCard){
+		return simulate(playerHand, dealerCard, null);
+	}
+	
+	public SimulatorResults simulate(String playerHand, String dealerCard, String burnedCards){
+		return simulate(playerHand, dealerCard, burnedCards, DECKS);
+	}
+	
+	public SimulatorResults simulate(String playerHand, String dealerCard, String burnedCards, Integer burnAmount){
 		BlackJackMultiDeck bjmd = new BlackJackMultiDeck(DECKS);
 		
+		if(burnedCards != null){
+			bjmd.burn(burnedCards, burnAmount);
+		}
 		PlayerHand hand = new PlayerHand();
-		
 		for(int i = 0; i < playerHand.length(); i+=2){
 			hand.addCard(bjmd.pickCard(Deck.getValue(playerHand.substring(i,i+2))));
 		}
 		byte dc = bjmd.pickCard(Deck.getValue(dealerCard));
-		
 		
 		return simulate(bjmd, hand, dc);
 	}
@@ -56,13 +65,14 @@ public class BasicSimulator {
 		BlackjackSimulatorExecutor executor = new BlackjackSimulatorExecutor(NTHREADS, NTHREADS*2, 1l, TimeUnit.HOURS, blockQueue, availableActions);
 		
 		while(simulationsRemaining > 0){
-			RunnableSimulator sim = new RunnableSimulator(bjmd, playerHands, dealerCard, availableActions, simulations);
+			RunnableSimulator sim = new RunnableSimulator(bjmd, playerHands, dealerCard, availableActions, simulations, simulations - simulationsRemaining);
 			executor.execute(sim);
 			simulationsRemaining--;
 		}
 		
-		long waitTime = Math.max(1l, Double.valueOf(Math.log(simulations)).longValue());
+//		while(!executor.isFinished()){
 		while(!simulations.equals(Integer.valueOf((int) executor.getCompletedTaskCount()))){
+			long waitTime = Math.max(1l, Double.valueOf(Math.log(simulations)).longValue());
 			try {
 				Thread.sleep(waitTime);
 			} catch (InterruptedException e) {

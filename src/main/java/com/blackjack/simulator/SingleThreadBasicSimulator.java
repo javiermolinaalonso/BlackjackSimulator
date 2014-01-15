@@ -36,16 +36,26 @@ public class SingleThreadBasicSimulator {
 	}
 	
 	public SimulatorResults simulate(String playerHand, String dealerCard){
+		return simulate(playerHand, dealerCard, null);
+	}
+	
+	public SimulatorResults simulate(String playerHand, String dealerCard, String burnedCards){
+		return simulate(playerHand, dealerCard, burnedCards, DECKS);
+	}
+	
+	public SimulatorResults simulate(String playerHand, String dealerCard, String burnedCards, Integer burnAmount){
 		BlackJackMultiDeck bjmd = new BlackJackMultiDeck(DECKS);
 		
-		byte firstCard = bjmd.pickCard(Deck.getValue(playerHand.substring(0,2)));
-		byte secondCard = bjmd.pickCard(Deck.getValue(playerHand.substring(2,4)));
+		if(burnedCards != null){
+			bjmd.burn(burnedCards, burnAmount);
+		}
+		PlayerHand hand = new PlayerHand();
+		for(int i = 0; i < playerHand.length(); i+=2){
+			hand.addCard(bjmd.pickCard(Deck.getValue(playerHand.substring(i,i+2))));
+		}
 		byte dc = bjmd.pickCard(Deck.getValue(dealerCard));
 		
-		PlayerHand hand = new PlayerHand(firstCard, secondCard);
-		simulate(bjmd, hand, dc);
-		
-		return new SimulatorResults(playerHand, dealerCard, mapRatio);
+		return simulate(bjmd, hand, dc);
 	}
 	
 	public SimulatorResults simulate(BlackJackMultiDeck bjmd, PlayerHand playerHands, byte dealerCard) {

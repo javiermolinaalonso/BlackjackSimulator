@@ -1,7 +1,8 @@
 package com.blackjack.simulator;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -9,11 +10,12 @@ import com.blackjack.StateSimulator;
 
 public class BlackjackSimulatorExecutor extends ThreadPoolExecutor {
 
-	protected HashMap<BlackjackAction, StateSimulator> mapRatio;
+	protected ConcurrentHashMap<BlackjackAction, StateSimulator> mapRatio;
+	private Object sync = new Object();
 	
 	public BlackjackSimulatorExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, BlackjackAction[] actions) {
-		super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
-		mapRatio = new HashMap<BlackjackAction, StateSimulator>();
+		super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, new RejectedHandler());
+		mapRatio = new ConcurrentHashMap<BlackjackAction, StateSimulator>();
 		for(BlackjackAction action : actions){
 			mapRatio.put(action, new StateSimulator(action));
 		}
@@ -22,12 +24,15 @@ public class BlackjackSimulatorExecutor extends ThreadPoolExecutor {
 	@Override
 	public void afterExecute(Runnable r, Throwable t){
 		RunnableSimulator sim = (RunnableSimulator) r;
-		for(BlackjackAction nSimAction : sim.getMapRatio().keySet()){
-			mapRatio.get(nSimAction).addAll(sim.getMapRatio().get(nSimAction));
+		synchronized (sync) {
+			for(BlackjackAction nSimAction : sim.getMapRatio().keySet()){
+				mapRatio.get(nSimAction).addAll(sim.getMapRatio().get(nSimAction));
+			}
 		}
 	}
 
-	public HashMap<BlackjackAction, StateSimulator> getMapRatio() {
+	public Map<BlackjackAction, StateSimulator> getMapRatio() {
 		return mapRatio;
 	}
+	
 }
